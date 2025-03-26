@@ -2,8 +2,6 @@
 
 This repository contains the **Car Auction Management System** using **microservices**. It has two main APIs (**Auctions API** and **Vehicles API**) that communicate using **MassTransit**. For more details about the first version, see the [Car Auction Management System README](https://github.com/vagnerjsmello/car-auction-management-system).
 
-
-
 ---
 
 ## Features
@@ -43,53 +41,77 @@ CarAuctionManagement.sln
 
 ---
 
-## 1. Auctions API
+## Auctions API
 
-This API manages auctions.
+### Key Responsibilities:
 
-### Key Points:
+#### CAMS.Auctions.Api:
+- Provides RESTful endpoints to manage auctions:
+  - `POST /api/auctions`: Start a new auction.
+  - `POST /api/auctions/{auctionId}/bids`: Place a new bid.
+  - `POST /api/auctions/{auctionId}/close`: Close an auction.
 
-- **Controllers and endpoints** to create, manage, and end auctions.
-- **Application Layer (CQRS with MediatR)**:
-  - Commands (StartAuction, PlaceBid, CloseAuction)
-  - Queries (GetAuction, SearchAuctions)
-- **Data Layer**:
-  - InMemoryAuctionRepository
-- **Domain Layer**:
-  - Auction and Bid entities
-  - Domain events (AuctionStartedEvent, BidPlacedEvent, AuctionClosedEvent)
+#### CAMS.Auctions.Application:
+- Uses Commands and Queries (CQRS pattern with MediatR):
+  - **Commands:**
+    - `StartAuctionCommand`: Checks if vehicle exists and is available, starts a new auction.
+    - `PlaceBidCommand`: Places a bid, validates if the new bid is higher.
+    - `CloseAuctionCommand`: Closes an active auction and triggers domain events.
+  - **Queries:**
+    - `GetAuctionQuery`: Retrieves auction details.
+    - `SearchAuctionsQuery`: Searches auctions based on criteria.
+
+#### CAMS.Auctions.Data:
+- Stores auctions data temporarily using `InMemoryAuctionRepository`.
+
+#### CAMS.Auctions.Domain:
+- Defines key entities:
+  - **Auction**: Holds auction details, bids, and status (Active/Closed).
+  - **Bid**: Details of each bid including amount, bidder ID, and time.
+- Manages domain events like:
+  - `AuctionStartedEvent`
+  - `BidPlacedEvent`
+  - `AuctionClosedEvent`
 
 ---
 
-## 2. Vehicles API
+## Vehicles API
 
-This API manages vehicle details.
+### Key Responsibilities:
 
-### Key Points:
+#### CAMS.Vehicles.Api:
+- Provides RESTful endpoints to manage vehicles:
+  - `POST /api/vehicles`: Register a new vehicle.
+  - `GET /api/vehicles`: Search for vehicles.
 
-- **Controllers and endpoints** for creating and searching vehicles.
-- **Application Layer (CQRS with MediatR)**:
-  - Command (CreateVehicle)
-  - Query (SearchVehicles)
-- **Data Layer**:
-  - InMemoryVehicleRepository
-- **Domain Layer**:
-  - Vehicle entities (Sedan, SUV, Hatchback, Truck)
-  - Factory Method (VehicleFactory)
+#### CAMS.Vehicles.Application:
+- Uses Commands and Queries (CQRS pattern with MediatR):
+  - **Commands:**
+    - `CreateVehicleCommand`: Adds a new vehicle to the system.
+  - **Queries:**
+    - `SearchVehiclesQuery`: Searches vehicles based on criteria.
+
+#### CAMS.Vehicles.Data:
+- Stores vehicle data temporarily using `InMemoryVehicleRepository`.
+
+#### CAMS.Vehicles.Domain:
+- Defines key entities:
+  - **Vehicle (abstract)**: Shared attributes for all vehicles.
+  - **Sedan, SUV, Hatchback, Truck**: Specific types of vehicles with unique attributes.
+- Provides a Factory Method (`VehicleFactory`) to create vehicles easily and consistently.
 
 ---
 
 ## Communication Between APIs
 
-The APIs use **MassTransit**:
+The APIs communicate asynchronously using **MassTransit**:
 
 - **Development** uses **In-Memory** messaging.
-- **Production** uses **Azure Service Bus**.
+- **Production** uses **Azure Service Bus** configured in `appsettings.json`.
 
-### Example:
-
-- `CheckVehicleAvailabilityRequest`: sent from Auctions API.
-- `CheckVehicleAvailabilityConsumer`: checks and responds in Vehicles API.
+### Example Communication:
+- **Auctions API** sends a `CheckVehicleAvailabilityRequest` message to Vehicles API.
+- **Vehicles API** checks availability with `CheckVehicleAvailabilityConsumer` and responds.
 
 ---
 
@@ -97,41 +119,40 @@ The APIs use **MassTransit**:
 
 Shared parts for both APIs:
 
-- **Exceptions** (AuctionNotFoundException, VehicleNotFoundException, etc.)
-- **Middleware** for error handling
-- **ResponseResult** for standard responses
-- **Configuration** for Service Bus (ServiceBusSettings)
+- **Exceptions**: Provides consistent error handling across both APIs.
+- **Middleware**: Handles exceptions and provides uniform responses.
+- **ResponseResult**: Standard response format.
+- **ServiceBusSettings**: Manages configuration for Azure Service Bus.
 
 ---
 
 ## CAMS.Infrastructure
 
-Handles messaging using MassTransit:
+Handles messaging configuration and management:
 
-- **Consumers and Publishers** for messages
-- **MassTransit configuration** (Service Bus and In-Memory)
+- Configures **MassTransit** for messaging between APIs.
+- Implements message Consumers and Publishers.
 
 ---
 
 ## Libraries Used
 
 - **.NET 8 LTS**
-- **MediatR** (CQRS)
+- **MediatR** (CQRS pattern)
 - **MassTransit** (Messaging)
-- **FluentValidation**
-- **Swagger** for API documentation
-- **xUnit, Moq, FluentAssertions** for tests (in progress)
+- **FluentValidation** (Validation)
+- **Swagger** (API documentation)
+- **xUnit, Moq, FluentAssertions** (Testing, currently in progress)
 
 ---
 
-## Architecture and OO Patterns
+## Architecture and Object-Oriented Patterns
 
-- **Clean Architecture** and **Domain-Driven Design (DDD)**
-- Clear structure in **Application**, **Domain**, and **Infrastructure**
-- **CQRS with MediatR**
-- **Domain events** for better organisation
-- **Notification Pattern** for clear validations
-- **Factory Method** for creating entities easily
+- **Clean Architecture and Domain-Driven Design (DDD)**: Clear and maintainable project structure.
+- **CQRS with MediatR**: Separates commands (actions) from queries (requests for information).
+- **Domain Events**: Allows easy communication and action triggering based on changes.
+- **Notification Pattern**: Collects and returns validation errors clearly.
+- **Factory Method**: Centralises object creation for consistency and simplicity.
 
 ---
 
@@ -139,7 +160,7 @@ Handles messaging using MassTransit:
 
 ### Development
 
-Run each API:
+Run each API separately:
 
 ```bash
 cd src/AuctionsApi/CAMS.Auctions.Api
@@ -149,9 +170,13 @@ cd src/VehiclesApi/CAMS.Vehicles.Api
 dotnet run
 ```
 
+Test APIs via Swagger:
+- Auctions API: `https://localhost:7041/swagger`
+- Vehicles API: `https://localhost:7141/swagger`
+
 ### Production
 
-Set this in `appsettings.json`:
+Configure Azure Service Bus in `appsettings.json`:
 
 ```json
 "ServiceBusSettings": {
@@ -168,17 +193,17 @@ Set this in `appsettings.json`:
 
 ## Tests
 
-Automated tests with xUnit, Moq, FluentAssertions (in progress).
+Automated tests using xUnit, Moq, FluentAssertions are in development.
 
 ---
 
 ## Contributions
 
-Contributions are welcome through Pull Requests or Issues.
+Contributions welcome through Pull Requests or Issues.
 
 ---
 
 ## Conclusion
 
-This version with microservices keeps the project clear and easy to manage, using MassTransit and Azure Service Bus for good communication. For more details about the original version, check the [Car Auction Management System README](https://github.com/vagnerjsmello/car-auction-management-system)
+This microservices version improves the project's scalability and maintainability with clear separation of responsibilities and reliable communication using MassTransit and Azure Service Bus. For details about the original version, see the [Car Auction Management System README](https://github.com/vagnerjsmello/car-auction-management-system).
 
