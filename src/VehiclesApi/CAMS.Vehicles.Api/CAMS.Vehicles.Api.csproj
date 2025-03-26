@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <AssemblyName>CAMS.Vehicles.Api</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e9ad2784-b4c9-497c-a714-3cf559be876e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.3.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.14" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CAMS.Infrastructure\CAMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\CAMS.Vehicles.Application\CAMS.Vehicles.Application.csproj" />
+    <ProjectReference Include="..\CAMS.Vehicles.Data\CAMS.Vehicles.Data.csproj" />
+    <ProjectReference Include="..\CAMS.Vehicles.Domain\CAMS.Vehicles.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

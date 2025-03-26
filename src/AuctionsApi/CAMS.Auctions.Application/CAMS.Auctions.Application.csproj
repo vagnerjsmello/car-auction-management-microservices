@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>CAMS.Auctions.Application</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CAMS.Common\CAMS.Common.csproj" />
+    <ProjectReference Include="..\..\CAMS.Infrastructure\CAMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\CAMS.Auctions.Data\CAMS.Auctions.Data.csproj" />
+    <ProjectReference Include="..\CAMS.Auctions.Domain\CAMS.Auctions.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

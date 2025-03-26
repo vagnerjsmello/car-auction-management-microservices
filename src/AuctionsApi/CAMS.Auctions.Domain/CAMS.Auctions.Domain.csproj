@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>CAMS.Auctions.Domain</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\CAMS.Common\CAMS.Common.csproj" />
+  </ItemGroup>
+
+</Project>
